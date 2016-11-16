@@ -1,5 +1,10 @@
 var oSystem = {
   oInputHandler: new oInputHandler(),
-  aoNodes: []
-
+  oLayout: new oLayout(),
+  aoNodes: [],
+  oSelectedNode: undefined,
 };
+
+function keyPressed() {
+    oSystem.oInputHandler.onKeyPress(key);
+}

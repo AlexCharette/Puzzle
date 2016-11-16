@@ -8,7 +8,7 @@ var oInputHandler = function() {
       this.sCurrentCommand = asCommands[1];
     } else if (ipKey == 'a') {
       this.sCurrentCommand = asCommands[2];
-    } else if (ipKey == 's') {
+    } else if (ipKey == 'd') {
       this.sCurrentCommand = asCommands[3];
     } else {
       this.sCurrentCommand = asCommands[4];
