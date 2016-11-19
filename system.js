@@ -1,27 +1,30 @@
 var oSystem = {
-  oInputHandler: new oInputHandler(),
-  oLayout: new oLayout(),
-  aoNodes: [],
-  oSelectedNode: undefined,
-};
+  oPath: new oPath(),
+  oLevel_1: new oLevel_1,
 
-function keyPressed() {
-  with ( oSystem ) {
-    oInputHandler.onKeyPress( key );
-    oSelectedNode.receiveCommand( oInputHandler.sCurrentCommand );
-  }
-}
+  init: function() {
+    this.loadLevel( this.oLevel_1 );
+    console.log(this.aoNodes);
+  },
 
-function eGetNextIn( apArray, pCurrentElement ) {
-  if ( ( indexOf( apArray ) + 1 ) < apArray.length ) {
-    pCurrentElement = apArray[ indexOf( pCurrentElement ) + 1 ];
-  }
-  return pCurrentElement;
-}
+  run: function() {
+    this.checkPathProgress();
+  },
 
-function eGetPreviousIn( apArray, pCurrentElement ) {
-  if ( ( indexOf( apArray ) - 1 ) >= 0 ) {
-    pCurrentElement = apArray[ indexOf( pCurrentElement ) - 1 ];
+  loadLevel: function( opLevel ) {
+    this.oCurrentLevel = opLevel;
+    opLevel.oLayout.init();
+    this.aoNodes = opLevel.oLayout.aoNodes;
+    this.oPath.oBody.setStartPos( this.aoNodes[ 0 ].oBody.vPosition );
+  },
+
+  checkPathProgress: function() {
+    with ( this.oPath.oBody ) {
+      for ( oNode of this.oCurrentLevel.oLayout.aoRouteNodes ) {
+        if ( oNode.oBody.bContains( this.vCurrentPos ) ) {
+          this.oCurrentNode = oNode;
+        }
+      }
+    }
   }
-  return pCurrentElement;
 }

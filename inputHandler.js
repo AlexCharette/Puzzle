@@ -1,17 +1,31 @@
-var oInputHandler = function() {
-  this.sCurrentCommand = "";
-  this.onKeyPress = function(ipKey) {
-    var asCommands = ["up", "down", "left", "right", "invalid"];
-    if (ipKey == 'w') {
-      this.sCurrentCommand = asCommands[0];
-    } else if (ipKey == 's') {
-      this.sCurrentCommand = asCommands[1];
-    } else if (ipKey == 'a') {
-      this.sCurrentCommand = asCommands[2];
-    } else if (ipKey == 'd') {
-      this.sCurrentCommand = asCommands[3];
-    } else {
-      this.sCurrentCommand = asCommands[4];
+var oInputHandler = {
+  sCurrentNodeCommand: "",
+  sCurrentSystemCommand: "pause",
+  onKeyPress: function(ipKey) {
+    var asCommands = ["up", "down", "left", "right", "run", "pause", "invalid"];
+    switch (ipKey) {
+      case 'w' :
+        this.sCurrentNodeCommand = asCommands[0];
+      break;
+      case 's' :
+        this.sCurrentNodeCommand = asCommands[1];
+      break;
+      case 'a' :
+        this.sCurrentNodeCommand = asCommands[2];
+      break;
+      case 'd' :
+        this.sCurrentNodeCommand = asCommands[3];
+      break;
+      case 'space' :
+        if ( this.sCurrentSystemCommand != asCommands[4] ) {
+          this.sCurrentSystemCommand = asCommands[4];
+        } else {
+          this.sCurrentSystemCommand = asCommands[5];
+        }
+      break;
+      default :
+        this.sCurrentCommand = asCommands[asCommands.length - 1]; // invalid
+      break;
     }
   }
 };

@@ -1,38 +1,41 @@
-var oLevel = function( ipNumNodes ) {
-  this.iNUM_NODES = ipNumNodes;
+var oLayout = function( ipNumNodes, avpLocations ) {
+  this.iNUM_NODES2 = ipNumNodes;
+  console.log(this.iNUM_NODES2);
   this.aoNodes = [];
+  this.voEndNodes = new oVector( new oEndNode(), new oEndNode() );
+  this.aoRouteNodes = [];
+
+  this.init = function() {
+    this.setNodes();
+    this.setNodeLocations( avpLocations );
+  }
 
   this.setNodes = function() {
-    this.aoNodes[ 0 ] = new oEndNode();
-    this.aoNodes[ iNUM_NODES - 1 ] = new oEndNode();
-    if ( iNUM_NODES < 3 ) return;
-    for (var i = 1; i < iNUM_NODES - 1; i++) {
-      this.aoNodes[ i ] = new oRouteNode();
-    }
+    this.aoNodes[ 0 ] = this.voEndNodes.x;
+    this.aoNodes[ 1 ] = this.voEndNodes.y;
+    if ( this.iNUM_NODES2 < 3 ) return;
+    this.setRouteNodes( 1 );
+    console.log("Node Array: " + this.aoNodes);
   }
-  this.setNodeLocations = function( aopLocations ) {
-    for ( var i = 0; i < iNUM_NODES; i++ ) {
-      this.aoNodes[ i ].setLocation( aopLocations[ i ] );
-    }
+
+  this.setRouteNodes = function( ipStartIndex ) {
+    for ( var i = ipStartIndex; i < this.iNUM_NODES2 - 1; i++ )
+      this.aoNodes.splice(i, 0, new oRouteNode());
+  }
+
+  this.setNodeLocations = function( avpLocations ) {
+    for ( var i = 0; i < this.iNUM_NODES2; i++ )
+      this.aoNodes[ i ].oNodeBody.setPosition( avpLocations[ i ] );
   }
 };
 
 var oLevel_1 = function() {
   this.iNUM_NODES = 3;
-  this.iRowStartX = width / iNUM_NODES;
-  this.iXIncrement = width / iNUM_NODES * 2;
-  this.iRowY = height / 2;
-  this.aoLocations = [ new oVector( this.iRowStartX, this.iRowY ),
-                       new oVector( this.iRowStartX + this.iXIncrement, this.iRowY ),
-                       new oVector( this.iRowStartX + ( this.iXIncrement * 2 ), this.iRowY ) ];
-  this.oLevel = new oLevel( this.iNUM_NODES );
-};
-
-var oVector = function( fpXPos, fpYPos ) {
-  this.fXPos = fpXPos;
-  this.fYPos = fpYPos;
-  this.setPosition = function( fpNewXPos, fpNewYPos ) {
-    this.iXPos = fpNewXPos;
-    this.iYPos = fpNewYPos;
-  }
-};
+  this.iRowStartX = window.InnerWidth / this.iNUM_NODES;
+  this.iXIncrement = window.InnerWidth / this.iNUM_NODES * 2;
+  this.iRowY = window.InnerHeight / 2;
+  this.avLocations = [ new oVector( this.iRowStartX, this.iRowY ),
+                 new oVector( this.iRowStartX + this.iXIncrement, this.iRowY ),
+                 new oVector( this.iRowStartX + ( this.iXIncrement * 2 ), this.iRowY ) ];
+  this.oLayout = new oLayout( this.iNUM_NODES, this.avLocations );
+}
