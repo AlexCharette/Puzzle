@@ -1,3 +1,4 @@
+
 function eGetNextIn_From( pArray, pCurrentElement ) {
   if ( ( indexOf( pArray ) + 1 ) < pArray.length ) {
     pCurrentElement = pArray[ indexOf( pCurrentElement ) + 1 ];

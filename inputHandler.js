@@ -28,4 +28,4 @@ var oInputHandler = {
       break;
     }
   }
-};
+}

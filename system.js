@@ -1,24 +1,23 @@
-var oSystem = {
-  oPath: new oPath(),
-  oLevel_1: new oLevel_1,
+var oSystem = function() {
+  this.oPath = new oPath();
 
-  init: function() {
-    this.loadLevel( this.oLevel_1 );
-    console.log(this.aoNodes);
-  },
+  this.init = function() {
+    this.loadLevel( new oLevel_1() );
+  }
 
-  run: function() {
-    this.checkPathProgress();
-  },
+  this.run = function() {
+    //this.checkPathProgress();
+    this.oCurrentLevel.oLayout.runNodes();
+  }
 
-  loadLevel: function( opLevel ) {
+  this.loadLevel = function( opLevel ) {
     this.oCurrentLevel = opLevel;
     opLevel.oLayout.init();
     this.aoNodes = opLevel.oLayout.aoNodes;
     this.oPath.oBody.setStartPos( this.aoNodes[ 0 ].oBody.vPosition );
-  },
+  }
 
-  checkPathProgress: function() {
+  this.checkPathProgress = function() {
     with ( this.oPath.oBody ) {
       for ( oNode of this.oCurrentLevel.oLayout.aoRouteNodes ) {
         if ( oNode.oBody.bContains( this.vCurrentPos ) ) {
@@ -27,4 +26,4 @@ var oSystem = {
       }
     }
   }
-}
+};
