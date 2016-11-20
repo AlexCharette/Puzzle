@@ -1,7 +1,7 @@
 
 var oNodeBody = function() {
   this.vPosition;
-  this.iSize = 50; // TODO set different value
+  this.iSize = 200; // TODO set different value
   this.setPosition = function( vpNewPos ) {
     this.vPosition = vpNewPos;
   }
@@ -46,39 +46,32 @@ var oEndNode = function() {
   }
 };
 
-var oRouteNode = function( spBaseState = "E" ) {
+var oRouteNode = function( spBaseState = "AA" ) {
   this.oBody = new oNodeBody();
   this.oRender = new oNodeRender();
-  this.asStates = [ "E", "A", "R", "RD", "D", "DL", "RL", "L", "LU", "U", "RU" ];
-  this.asUDStates = [ "U", "E", "", "A", "D" ];
-  this.asLRStates = [ "L", "E", "", "A", "R" ];
+  this.asUDStates = [ "U", "", "A", "D" ];
+  this.asLRStates = [ "L", "", "A", "R" ];
   this.sActiveUDState = spBaseState;
   this.sActiveLRState = spBaseState;
-  this.sActiveState = this.sActiveUDState + this.sActiveLRState;
 
   this.init = function() {
-    this.oRender.init( this.setShape( this.sActiveState ) );
+    this.setShape();
   }
 
   this.run = function() {
-    this.oRender.renderShape( this.oBody );
-    this.b = this.oBody.bContains( vMouse );
+    if ( this.bIsSelected ) {
+      console.log("I'm selected!");
+      this.oRender.setColour( '#3C9C56' );
+    }
+    this.oRender.renderShape();
   }
 
-  this.oRender.init = function( pShape ) {
-    this.afTriCoords_1 = pShape;
-    this.afTriCoords_2 = pShape;
-  }
-
-  this.oRender.renderShape = function( oNodeBody ) {
+  this.oRender.renderShape = function() {
     this.renderColours();
     triangle( this.afTriCoords_1[ 0 ].x, this.afTriCoords_1[ 0 ].y, this.afTriCoords_1[ 1 ].x,
               this.afTriCoords_1[ 1 ].y, this.afTriCoords_1[ 2 ].x, this.afTriCoords_1[ 2 ].y );
-    // triangle( this.afTriCoords_2[ 0 ].x, this.afTriCoords_2[ 0 ].y, this.afTriCoords_2[ 1 ].x,
-    //           this.afTriCoords_2[ 1 ].y, this.afTriCoords_2[ 2 ].x, this.afTriCoords_2[ 2 ].y );
-    var iSizeOffset = oNodeBody.iSize / 2;
-    triangle(oNodeBody.vPosition.x - iSizeOffset, oNodeBody.vPosition.y, oNodeBody.vPosition.x, oNodeBody.vPosition.y - iSizeOffset, oNodeBody.vPosition.x + iSizeOffset, oNodeBody.vPosition.y);
-    triangle(oNodeBody.vPosition.x + iSizeOffset, oNodeBody.vPosition.y, oNodeBody.vPosition.x, oNodeBody.vPosition.y + iSizeOffset, oNodeBody.vPosition.x - iSizeOffset, oNodeBody.vPosition.y);
+    triangle( this.afTriCoords_2[ 0 ].x, this.afTriCoords_2[ 0 ].y, this.afTriCoords_2[ 1 ].x,
+              this.afTriCoords_2[ 1 ].y, this.afTriCoords_2[ 2 ].x, this.afTriCoords_2[ 2 ].y );
   }
 
   this.oRender.animateNode = function() {
@@ -108,68 +101,76 @@ var oRouteNode = function( spBaseState = "E" ) {
       console.log( "Invalid command entered: " + key );
       break;
     }
-    this.sActiveState = this.sActiveUDState + this.sActiveLRState;
-    this.afGetShape();
+    this.setShape();
   }
 
-  this.afGetShape = function() {
-    with ( this.oRender ) {
-      if ( this.sActiveState.length > 1 ) {
-        if ( this.sActiveState[ 0 ] == "E" || this.sActiveState[ 1 ] == "E" ) {
-          afTriCoords_1 = this.afGetTriCoordsFor( "ER" );
-          afTriCoords_2 = this.afGetTriCoordsFor( "EL" );
-        } else if ( this.sActiveState[ 0 ] == "A" || this.sActiveState[ 1 ] == "A" ) {
-          afTriCoords_1 = this.afGetTriCoordsFor( "U" );
-          afTriCoords_2 = this.afGetTriCoordsFor( "D" );
-        } else {
-          afTriCoords_1 = this.afGetTriCoordsFor( this.sActiveState[ 0 ] );
-          afTriCoords_2 = this.afGetTriCoordsFor( this.sActiveState[ 1 ] );
-        }
+  this.setShape = function() {
+    this.sActiveState = this.sActiveUDState + this.sActiveLRState;
+    if ( !this.sActiveState ) return; // will return if both states are ""
+    if ( this.sActiveState.length > 1 ) {
+      if ( this.sActiveState[ 0 ] == "E" || this.sActiveState[ 1 ] == "E" ) {
+        this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( "ER" );
+        this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( "EL" );
+      } else if ( this.sActiveState[ 0 ] == "A" ) {
+        this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( "U" );
+        this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( "D" );
+      } else if ( this.sActiveState[ 1 ] == "A" ) {
+        this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( "L" );
+        this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( "R" );
       } else {
-        afTriCoords_1 = this.afGetTriCoordsFor( this.sActiveState );
+        this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( this.sActiveState[ 0 ] );
+        this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( this.sActiveState[ 1 ] );
       }
+    } else {
+      this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( this.sActiveState );
+      this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( this.sActiveState );
     }
   }
 
   this.afGetTriCoordsFor = function( spState ) {
     if ( !this.oBody.vPosition ) return;
-    var iSizeOffset = this.oBody.iSize / 2;
+    with ( this.oBody ) {
+      var iSizeOffset = ( iSize / 2 );
+      var iDiagonalSize = Math.sqrt( Math.pow( iSize, 2 ) * 2 );
+      var iDiagonalOffset = iDiagonalSize / 2;
+      var iOverlapOffset = 3;
+    }
     with ( this.oBody.vPosition ) {
       switch ( spState ) {
         case "ER" :
-          return [ [ x - iSizeOffset, y - iSizeOffset ], // TL
-                   [ x + iSizeOffset, y - iSizeOffset ], // TR
-                   [ x + iSizeOffset, y + iSizeOffset ]  // BR
+          return [ new oVector( x - iSizeOffset, y - iSizeOffset ), // TL
+                   new oVector( x + iSizeOffset, y - iSizeOffset ), // TR
+                   new oVector( x + iSizeOffset, y + iSizeOffset )  // BR
                  ];
         break;
         case "EL" :
-          return [ [ x - iSizeOffset, y - iSizeOffset ], // TL
-                   [ x - iSizeOffset, y + iSizeOffset ], // BL
-                   [ x + iSizeOffset, y + iSizeOffset ]  // BR
+          return [ new oVector( x - iSizeOffset, y - iSizeOffset ), // TL
+                   new oVector( x - iSizeOffset, y + iSizeOffset ), // BL
+                   new oVector( x + iSizeOffset, y + iSizeOffset )  // BR
                  ];
         break;
         case "U" :
-          return [ [ x - iSizeOffset, y ], // ML
-                   [ x, y - iSizeOffset ], // TM
-                   [ x + iSizeOffset, y ]  // MR
+          return [ new oVector( x - iDiagonalOffset, y - iOverlapOffset ),     // ML
+                   new oVector( x, y - ( iDiagonalOffset + iOverlapOffset ) ), // TM
+                   new oVector( x + iDiagonalOffset, y - iOverlapOffset )      // MR
                  ];
         break;
         case "D" :
-          return [ [ x + iSizeOffset, y ], // MR
-                   [ x, y + iSizeOffset ], // BM
-                   [ x - iSizeOffset, y ]  // ML
+          return [ new oVector( x + iDiagonalOffset, y + iOverlapOffset ),     // MR
+                   new oVector( x, y + ( iDiagonalOffset + iOverlapOffset ) ), // BM
+                   new oVector( x - iDiagonalOffset, y + iOverlapOffset )      // ML
                  ];
         break;
         case "L" :
-          return [ [ x, y + iSizeOffset ], // BM
-                   [ x - iSizeOffset, y ], // ML
-                   [ x, y - iSizeOffset ]  // TM
+          return [ new oVector( x - iOverlapOffset, y + iDiagonalOffset ),     // BM
+                   new oVector( x - ( iDiagonalOffset + iOverlapOffset ), y ), // ML
+                   new oVector( x - iOverlapOffset, y - iDiagonalOffset )      // TM
                  ];
         break;
         case "R" :
-          return [ [ x, y - iSizeOffset ], // TM
-                   [ x + iSizeOffset, y ], // MR
-                   [ x, y + iSizeOffset ]  // BM
+          return [ new oVector( x + iOverlapOffset, y - iDiagonalOffset ),     // TM
+                   new oVector( x + ( iDiagonalOffset + iOverlapOffset ), y ), // MR
+                   new oVector( x + iOverlapOffset, y + iDiagonalOffset )      // BM
                  ];
         break;
         default:

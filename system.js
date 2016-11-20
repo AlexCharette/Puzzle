@@ -6,7 +6,7 @@ var oSystem = function() {
   }
 
   this.run = function() {
-    //this.checkPathProgress();
+    this.checkPathProgress();
     this.oCurrentLevel.oLayout.runNodes();
   }
 
@@ -15,6 +15,22 @@ var oSystem = function() {
     opLevel.oLayout.init();
     this.aoNodes = opLevel.oLayout.aoNodes;
     this.oPath.oBody.setStartPos( this.aoNodes[ 0 ].oBody.vPosition );
+  }
+
+  this.checkForClickedNode = function() {
+    for ( oNode of this.aoNodes ) {
+      if ( oNode.oBody.bContains( vMouse ) )
+        this.setSelectedNode( oNode );
+    }
+  }
+
+  this.setSelectedNode = function( opNode ) {
+    if ( this.oSelectedNode ) {
+      this.oSelectedNode.bIsSelected = false;
+    }
+    this.oSelectedNode = opNode;
+    this.oSelectedNode.bIsSelected = true;
+    console.log(this.oSelectedNode)
   }
 
   this.checkPathProgress = function() {

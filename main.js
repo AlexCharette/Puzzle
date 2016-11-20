@@ -1,12 +1,14 @@
+var oSystem;
+var oCommandHandler;
 var vWindowSize;
 var vMouse;
 var sBackgroundColor;
-var oSystem;
 
 function setup() {
   oSystem = new oSystem();
+  oCommandHandler = new oCommandHandler();
   vWindowSize = new oVector( windowWidth, windowHeight );
-  vMouse = new oVector( mouseX, mouseY );
+  vMouse = new oVector();
   sBackgroundColor = 'rgba(46, 74, 140, 0.50)';
   createCanvas( windowWidth, windowHeight );
   background( sBackgroundColor );
@@ -15,17 +17,21 @@ function setup() {
 
 function draw() {
   background( sBackgroundColor );
-
+  vMouse.set( mouseX, mouseY );
   oSystem.run();
 }
 
 function keyPressed() {
   with ( oSystem ) {
     if ( !oSelectedNode ) return;
-    oInputHandler.onKeyPress( key );
-    oSelectedNode.receiveCommand( oInputHandler.sCurrentNodeCommand );
-    oSelectedNode.receiveCommand( oInputHandler.sCurrentSystemCommand );
+    oCommandHandler.onKeyPress( key );
+    oSelectedNode.receiveCommand( oCommandHandler.sCurrentNodeCommand );
+    oSelectedNode.receiveCommand( oCommandHandler.sCurrentSystemCommand );
   }
+}
+
+function mouseClicked() {
+  oSystem.checkForClickedNode();
 }
 
 function windowResized() {

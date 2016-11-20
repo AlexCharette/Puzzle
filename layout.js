@@ -49,7 +49,7 @@ var oLayout = function( ipNumNodes, avpLocations ) {
 var oLevel_1 = function() {
   this.iNUM_NODES = 3;
   this.iRowStartX = vWindowSize.x / this.iNUM_NODES;
-  this.iXIncrement = vWindowSize.x / ( this.iNUM_NODES * 4 );
+  this.iXIncrement = 300;
   this.iRowY = vWindowSize.y / 2;
   this.avLocations = [ new oVector( this.iRowStartX, this.iRowY ),
                        new oVector( this.iRowStartX + this.iXIncrement, this.iRowY ),
