@@ -1,15 +1,10 @@
 var oPath = function() {
   this.oBody = new oPathBody();
   this.oRender = new oPathRender();
-};
-
-var oPathBody = function() {
   this.oCurrentNode;
-  this.vStartPos;
-  this.vEndPos;
-  this.vCurrentPos;
   this.cDirection = "";
   this.bIsRunning = false;
+
   this.run = function() {
     if ( this.bReachedNode() ) {
       if ( !this.oCurrentNode.sActiveState ) return;
@@ -18,6 +13,28 @@ var oPathBody = function() {
     }
     this.move();
   }
+
+  this.move = function() {
+    with ( this.oBody ) {
+      switch ( this.cDirection ) {
+        case "L" :
+          vCurrentPos.x++;
+        break;
+        case "U" :
+          vCurrentPos.y--;
+        break;
+        case "R" :
+          vCurrentPos.x--;
+        break;
+        case "D" :
+          vCurrentPos.y++;
+        break;
+        default :
+        break;
+      }
+    }
+  }
+
   this.receiveCommand = function( spCommand ) {
     if ( spCommand == "run" ) {
       this.bIsRunning = true;
@@ -25,38 +42,29 @@ var oPathBody = function() {
       this.bIsRunning = false;
     }
   }
-  this.move = function() {
-    switch ( this.cDirection ) {
-      case "L" :
-        vCurrentPos.x++;
-      break;
-      case "U" :
-        vCurrentPos.y--;
-      break;
-      case "R" :
-        vCurrentPos.x--;
-      break;
-      case "D" :
-        vCurrentPos.y++;
-      break;
-      default :
-      break;
-    }
-  }
+
   this.bReachedNode = function() {
-    if ( this.vCurrentPos == this.oCurrentNode.oNodeBody.vPosition ) {
+    if ( this.oBody.vCurrentPos == this.oCurrentNode.oNodeBody.vPosition ) {
       return true;
     }
     return false;
   }
+
+  this.setDirection = function( cpNewDir ) {
+    this.cDirection = cpNewDir;
+  }
+};
+
+var oPathBody = function() {
+  this.vStartPos;
+  this.vEndPos;
+  this.vCurrentPos;
+
   this.setStartPos = function( vpNewStart ) {
     this.vStartPos = vpNewStart;
   }
   this.setEndPos = function( vpNewEnd ) {
     this.vEndPos = vpNewEnd;
-  }
-  this.setDirection = function( cpNewDir ) {
-    this.cDirection = cpNewDir;
   }
 };
 
