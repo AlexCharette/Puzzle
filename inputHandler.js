@@ -1,31 +1,32 @@
-var oInputHandler = {
-  sCurrentNodeCommand: "",
-  sCurrentSystemCommand: "pause",
-  onKeyPress: function(ipKey) {
-    var asCommands = ["up", "down", "left", "right", "run", "pause", "invalid"];
-    switch (ipKey) {
-      case 'w' :
-        this.sCurrentNodeCommand = asCommands[0];
+var oCommandHandler = function() {
+  this.sCurrentSystemCommand = "pause";
+  this.asNodeCommands = [ "up", "down", "left", "right" ];
+  this.asSystemCommands = [ "run", "pause" ];
+  this.sError = "invalid";
+  this.onKeyPress = function( ipKey ) {
+    switch ( ipKey ) {
+      case 'W' :
+        this.sCurrentNodeCommand = this.asNodeCommands[ 0 ];
       break;
-      case 's' :
-        this.sCurrentNodeCommand = asCommands[1];
+      case 'S' :
+        this.sCurrentNodeCommand = this.asNodeCommands[ 1 ];
       break;
-      case 'a' :
-        this.sCurrentNodeCommand = asCommands[2];
+      case 'A' :
+        this.sCurrentNodeCommand = this.asNodeCommands[ 2 ];
       break;
-      case 'd' :
-        this.sCurrentNodeCommand = asCommands[3];
+      case 'D' :
+        this.sCurrentNodeCommand = this.asNodeCommands[ 3 ];
       break;
       case 'space' :
-        if ( this.sCurrentSystemCommand != asCommands[4] ) {
-          this.sCurrentSystemCommand = asCommands[4];
+        if ( this.sCurrentSystemCommand != this.asSystemCommands[ 0 ] ) {
+          this.sCurrentSystemCommand = this.asSystemCommands[ 0 ];
         } else {
-          this.sCurrentSystemCommand = asCommands[5];
+          this.sCurrentSystemCommand = this.asSystemCommands[ 1 ];
         }
       break;
       default :
-        this.sCurrentCommand = asCommands[asCommands.length - 1]; // invalid
+        this.sCurrentNodeCommand = this.sError;
       break;
     }
   }
-}
+};
