@@ -17,7 +17,7 @@ var oCommandHandler = function() {
       case 'D' :
         this.sCurrentNodeCommand = this.asNodeCommands[ 3 ];
       break;
-      case 'space' :
+      case ' ' :
         if ( this.sCurrentSystemCommand != this.asSystemCommands[ 0 ] ) {
           this.sCurrentSystemCommand = this.asSystemCommands[ 0 ];
         } else {
