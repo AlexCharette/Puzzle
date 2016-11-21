@@ -23,10 +23,10 @@ function draw() {
 
 function keyPressed() {
   with ( oSystem ) {
+    oCommandHandler.onKeyPress( key );    
+    oPath.receiveCommand( oCommandHandler.sCurrentSystemCommand );
     if ( !oSelectedNode ) return;
-    oCommandHandler.onKeyPress( key );
     oSelectedNode.receiveCommand( oCommandHandler.sCurrentNodeCommand );
-    oSelectedNode.receiveCommand( oCommandHandler.sCurrentSystemCommand );
   }
 }
 

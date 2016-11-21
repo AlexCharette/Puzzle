@@ -5,13 +5,26 @@ var oPath = function() {
   this.cDirection = "";
   this.bIsRunning = false;
 
+  this.init = function() {
+    this.oBody.vCurrentPos = this.oBody.vStartPos;
+  }
   this.run = function() {
     if ( this.bReachedNode() ) {
       if ( !this.oCurrentNode.sActiveState ) return;
       var cNewDirection = this.oCurrentNode.sActiveState[ 0 ];
       this.setDirection( cNewDirection );
     }
+    if ( this.bIsRunning ) {
+      this.oRender.renderShape();
+    }
     this.move();
+  }
+
+  with ( this.oBody ) {
+    this.oRender.renderShape = function() {
+      this.renderColours();
+      rect( vStartPos.x, vStartPos.y, vCurrentPos.x - vStartPos.x, this.iWeight );
+    }
   }
 
   this.move = function() {
@@ -69,9 +82,10 @@ var oPathBody = function() {
 };
 
 var oPathRender = function() {
-  this.sColour = "";
-  this.iWeight = 0;
-  this.render = function() {
-
+  this.sColour = "#fff";
+  this.iWeight = 20;
+  this.renderColours = function() {
+    noStroke();
+    fill(this.sColour);
   }
 };

@@ -8,7 +8,6 @@ var oLayout = function( ipNumNodes, avpLocations ) {
     this.setNodes();
     this.setNodeLocations( avpLocations );
     this.initRouteNodes();
-    console.log( this.aoNodes );
   }
 
   this.run = function() {

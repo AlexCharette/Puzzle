@@ -24,7 +24,6 @@ var oEndNode = function() {
   this.oRender = new oNodeRender();
   this.run = function() {
     this.oRender.renderShape();
-    if ( this.oBody.bContains(vMouse) ) console.log("We got one!");
   }
   with ( this.oBody ) {
     this.oRender.renderShape = function() {
@@ -60,7 +59,6 @@ var oRouteNode = function( spBaseState = "AA" ) {
 
   this.run = function() {
     if ( this.bIsSelected ) {
-      console.log("I'm selected!");
       this.oRender.setColour( '#3C9C56' );
     }
     this.oRender.renderShape();

@@ -6,8 +6,9 @@ var oSystem = function() {
   }
 
   this.run = function() {
-    this.checkPathProgress();
+
     this.oCurrentLevel.oLayout.runNodes();
+    this.checkPathProgress();
   }
 
   this.loadLevel = function( opLevel ) {
@@ -15,6 +16,7 @@ var oSystem = function() {
     opLevel.oLayout.init();
     this.aoNodes = opLevel.oLayout.aoNodes;
     this.oPath.oBody.setStartPos( this.aoNodes[ 0 ].oBody.vPosition );
+    this.oPath.init();
   }
 
   this.checkForClickedNode = function() {
@@ -30,15 +32,12 @@ var oSystem = function() {
     }
     this.oSelectedNode = opNode;
     this.oSelectedNode.bIsSelected = true;
-    console.log(this.oSelectedNode)
   }
 
   this.checkPathProgress = function() {
-    with ( this.oPath.oBody ) {
-      for ( oNode of this.oCurrentLevel.oLayout.aoRouteNodes ) {
-        if ( oNode.oBody.bContains( this.vCurrentPos ) ) {
-          this.oCurrentNode = oNode;
-        }
+    for ( oNode of this.oCurrentLevel.oLayout.aoRouteNodes ) {
+      if ( oNode.oBody.bContains( this.oPath.oBody.vCurrentPos ) ) {
+        this.oCurrentNode = oNode;
       }
     }
   }
