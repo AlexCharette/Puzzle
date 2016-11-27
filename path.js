@@ -2,22 +2,22 @@ var oPath = function() {
   this.oBody = new oPathBody();
   this.oRender = new oPathRender();
   this.oCurrentNode;
-  this.cDirection = "";
+  this.cDirection = "R";
   this.bIsRunning = false;
 
   this.init = function() {
-    this.oBody.vCurrentPos = this.oBody.vStartPos;
+    var vCurrentPos = this.oBody.vStartPos;
+    this.oBody.vCurrentPos = new oVector( vCurrentPos.x, vCurrentPos.y );
   }
   this.run = function() {
     if ( this.bReachedNode() ) {
       if ( !this.oCurrentNode.sActiveState ) return;
-      var cNewDirection = this.oCurrentNode.sActiveState[ 0 ];
-      this.setDirection( cNewDirection );
+      this.setDirection( this.oCurrentNode.sActiveState[ 0 ] );
     }
     if ( this.bIsRunning ) {
       this.oRender.renderShape();
+      this.move();
     }
-    this.move();
   }
 
   with ( this.oBody ) {
@@ -29,14 +29,15 @@ var oPath = function() {
 
   this.move = function() {
     with ( this.oBody ) {
+      console.log( this.cDirection )
       switch ( this.cDirection ) {
-        case "L" :
+        case "R" :
           vCurrentPos.x++;
         break;
         case "U" :
           vCurrentPos.y--;
         break;
-        case "R" :
+        case "L" :
           vCurrentPos.x--;
         break;
         case "D" :
@@ -57,7 +58,11 @@ var oPath = function() {
   }
 
   this.bReachedNode = function() {
-    if ( this.oBody.vCurrentPos == this.oCurrentNode.oNodeBody.vPosition ) {
+    if ( !this.oCurrentNode || !this.oBody.vCurrentPos ) return;
+    var iPositionOffset = 10;
+    if ( this.oBody.vCurrentPos >= this.oCurrentNode.oBody.vPosition - iPositionOffset
+        && this.oBody.vCurrentPos <= this.oCurrentNode.oBody.vPosition + iPositionOffset )
+    {
       return true;
     }
     return false;

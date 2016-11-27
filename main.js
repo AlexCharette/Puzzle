@@ -23,8 +23,9 @@ function draw() {
 
 function keyPressed() {
   with ( oSystem ) {
-    oCommandHandler.onKeyPress( key );    
+    oCommandHandler.onKeyPress( key );
     oPath.receiveCommand( oCommandHandler.sCurrentSystemCommand );
+    console.log( oCommandHandler.sCurrentSystemCommand )
     if ( !oSelectedNode ) return;
     oSelectedNode.receiveCommand( oCommandHandler.sCurrentNodeCommand );
   }
