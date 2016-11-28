@@ -53,10 +53,10 @@ var oSystem = function() {
     for ( oNode of this.aoNodes ) {
       if ( oNode.oBody.bContains( this.oPath.oBody.vCurrentPos ) ) {
         this.oPath.oCurrentNode = oNode;
-        console.log(this.aoNodes.indexOf( oNode ))
         if ( this.aoNodes.indexOf( oNode ) == 0 ) {
           this.oPath.oCurrentNode.bIsFirst = true;
         } else if ( this.aoNodes.indexOf( oNode ) == this.aoNodes.length - 1 ) {
+          console.log("LAST STOP")
           this.oPath.oCurrentNode.bIsLast = true;
         }
       }

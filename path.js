@@ -1,9 +1,9 @@
-var oPathSegment = function( vpPosition, cpState ) {
+var oPathSegment = function( vpPosition, ipSpeed, cpState ) {
   this.vPosition = vpPosition;
   this.cState = cpState;
   this.bIsChanging = true;
   this.iChange = 0;
-  this.iIncrement = 3;
+  this.iIncrement = ipSpeed;
   this.sColour = "#fff";
   this.iWeight = 20;
 
@@ -60,21 +60,21 @@ var oPath = function() {
       this.createSegment();
       this.aoSegments[ this.aoSegments.length - 2 ].bIsChanging = false;
     }
-    for ( oSegment of this.aoSegments ) {
-      if ( this.bIsRunning ) // TODO FIX BUG
+    if ( this.bIsRunning ) {
+      for ( oSegment of this.aoSegments ) {
         oSegment.run();
-      oSegment.render();
+        oSegment.render();
+      }
     }
     this.move();
   }
 
   this.createSegment = function() {
     var vPathPos = new oVector( this.oBody.vCurrentPos.x, this.oBody.vCurrentPos.y );
-    this.aoSegments.push( new oPathSegment( vPathPos, this.cDirection ) );
+    this.aoSegments.push( new oPathSegment( vPathPos, this.oBody.iSpeed, this.cDirection ) );
   }
 
   this.move = function() {
-    var iSpeed = 3;
     with ( this.oBody ) {
       switch ( this.cDirection ) {
         case "R" :
@@ -105,10 +105,11 @@ var oPath = function() {
 
   this.bReachedNode = function() {
     if ( !this.oCurrentNode || this.oCurrentNode.bIsFirst ) return;
-    var iPositionOffset = 1;
+    var iPositionOffset = 5;
     if ( dist( this.oBody.vCurrentPos.x, this.oBody.vCurrentPos.y,
           this.oCurrentNode.oBody.vPosition.x,
           this.oCurrentNode.oBody.vPosition.y ) < iPositionOffset ) {
+          console.log( this.oCurrentNode.sActiveState[ 0 ] )
           return true;
         } else {
           return false;
@@ -116,19 +117,7 @@ var oPath = function() {
   }
 
   this.setDirection = function( cpNewDir ) {
-    if ( cpNewDir == "A" ) {
-      if ( this.cDirection == "D" ) {
-        this.cDirection = "U";
-      } else if ( this.cDirection == "U" ) {
-        this.cDirection = "D";
-      } else if ( this.cDirection == "L" ) {
-        this.cDirection = "R";
-      } else if ( this.cDirection == "R" ) {
-        this.cDirection = "L";
-      }
-    } else {
-      this.cDirection = cpNewDir;
-    }
+    this.cDirection = cpNewDir;
   }
 };
 
@@ -136,6 +125,7 @@ var oPathBody = function() {
   this.vStartPos;
   this.vEndPos;
   this.vCurrentPos;
+  this.iSpeed = 3;
 
   this.setStartPos = function( vpNewStart ) {
     this.vStartPos = vpNewStart;

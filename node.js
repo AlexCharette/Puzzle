@@ -104,22 +104,17 @@ var oRouteNode = function( spBaseState = "A" ) {
     this.sActiveState = this.sActiveUDState + this.sActiveLRState;
     if ( !this.sActiveState ) { return; } // will return if both states are ""
     if ( this.sActiveState.length > 1 ) {
-      if ( this.sActiveState[ 0 ] == "E" || this.sActiveState[ 1 ] == "E" ) {
-        this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( "ER" );
-        this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( "EL" );
-      } else if ( this.sActiveState[ 0 ] == "A" || this.sActiveState == "AA" ) {
-        this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( "U" );
-        this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( "D" );
+      if ( this.sActiveState[ 0 ] == "A" || this.sActiveState == "AA" ) {
+        this.sActiveState = "UD";
       } else if ( this.sActiveState[ 1 ] == "A" ) {
-        this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( "L" );
-        this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( "R" );
-      } else {
-        this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( this.sActiveState[ 0 ] );
-        this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( this.sActiveState[ 1 ] );
+        this.sActiveState = "LR";
       }
-    } else if ( this.sActiveState == "A" ){
+      this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( this.sActiveState[ 0 ] );
+      this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( this.sActiveState[ 1 ] );
+    } else if ( this.sActiveState == "A" ) {
       this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( "U");
       this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( "D" );
+      this.sActiveState = "UD";
     } else {
       this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( this.sActiveState );
       this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( this.sActiveState );
