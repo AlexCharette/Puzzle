@@ -10,7 +10,8 @@ var oNodeBody = function() {
     var iHalfSize = this.iSize / 2;
     with ( this.vPosition ) {
       if ( vCoord.x >= x - iHalfSize && vCoord.x <= x + iHalfSize
-           && vCoord.y >= y - iHalfSize && vCoord.y <= y + iHalfSize ) {
+           && vCoord.y >= y - iHalfSize && vCoord.y <= y + iHalfSize
+         ) {
         return true;
       } else {
         return false;
@@ -44,7 +45,6 @@ var oEndNode = function() {
     }
   }
 
-
 };
 
 var oRouteNode = function( spBaseState = "A" ) {
@@ -72,10 +72,6 @@ var oRouteNode = function( spBaseState = "A" ) {
               this.afTriCoords_1[ 1 ].y, this.afTriCoords_1[ 2 ].x, this.afTriCoords_1[ 2 ].y );
     triangle( this.afTriCoords_2[ 0 ].x, this.afTriCoords_2[ 0 ].y, this.afTriCoords_2[ 1 ].x,
               this.afTriCoords_2[ 1 ].y, this.afTriCoords_2[ 2 ].x, this.afTriCoords_2[ 2 ].y );
-  }
-
-  this.oRender.animateNode = function() {
-    // TODO later
   }
 
   // Changes the active state depending on the received command

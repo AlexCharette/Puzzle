@@ -52,6 +52,7 @@ var oLevel_1 = function() {
   this.iRowY = vWindowSize.y / 2;
   this.avLocations = [ new oVector( this.iRowStartX, this.iRowY ),
                        new oVector( this.iRowStartX + this.iXIncrement, this.iRowY ),
-                       new oVector( this.iRowStartX + ( this.iXIncrement * 2 ), this.iRowY ) ];
+                       new oVector( this.iRowStartX + ( this.iXIncrement * 2 ), this.iRowY )
+                     ];
   this.oLayout = new oLayout( this.iNUM_NODES, this.avLocations );
 };

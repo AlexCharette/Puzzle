@@ -1,47 +1,93 @@
+var oPathSegment = function( vpPosition, cpState ) {
+  this.vPosition = vpPosition;
+  this.cState = cpState;
+  this.bIsChanging = true;
+  this.iChange = 0;
+  this.iIncrement = 3;
+  this.sColour = "#fff";
+  this.iWeight = 20;
+
+  this.run = function() {
+    if ( this.bIsChanging ) {
+      this.iChange += this.iIncrement;
+    }
+  }
+
+  this.render = function() {
+    with ( this ) {
+      var iOffset = ( iWeight / 2 );
+      noStroke();
+      fill( sColour );
+      switch ( cState ) {
+        case "L" :
+          rect( ( vPosition.x - iOffset ) - iChange, ( vPosition.y - iOffset ), iChange, iWeight );
+        break;
+        case "R" :
+          rect( ( vPosition.x - iOffset ), ( vPosition.y - iOffset ), iChange, iWeight );
+        break;
+        case "U" :
+          rect( ( vPosition.x - iOffset ), ( vPosition.y - iOffset ) - iChange, iWeight, iChange );
+        break;
+        case "D" :
+          rect( ( vPosition.x - iOffset ), ( vPosition.y - iOffset ), iWeight, iChange );
+        break;
+        default:
+        break;
+      }
+    }
+  }
+};
+
 var oPath = function() {
   this.oBody = new oPathBody();
-  this.oRender = new oPathRender();
+  this.aoSegments = [];
   this.oCurrentNode;
   this.cDirection = "R";
   this.bIsRunning = false;
 
   this.init = function() {
-    var vCurrentPos = this.oBody.vStartPos;
-    this.oBody.vCurrentPos = new oVector( vCurrentPos.x, vCurrentPos.y );
-  }
-  this.run = function() {
-    if ( this.bReachedNode() ) {
-      if ( !this.oCurrentNode.sActiveState ) return;
-      this.setDirection( this.oCurrentNode.sActiveState[ 0 ] );
-    }
-    if ( this.bIsRunning ) {
-      this.oRender.renderShape();
-      this.move();
-    }
+    var vTempPos = this.oBody.vStartPos;
+    this.oBody.vCurrentPos = new oVector( vTempPos.x, vTempPos.y );
+    this.createSegment();
   }
 
-  with ( this.oBody ) {
-    this.oRender.renderShape = function() {
-      this.renderColours();
-      rect( vStartPos.x, vStartPos.y, vCurrentPos.x - vStartPos.x, this.iWeight );
+  this.run = function() {
+    if ( this.bReachedNode() && this.oCurrentNode.bIsLast ) {
+      this.bIsRunning = false;
+    } else if ( this.bReachedNode() ) {
+      if ( !this.oCurrentNode.sActiveState ) return;
+      this.setDirection( this.oCurrentNode.sActiveState[ 0 ] );
+      this.createSegment();
+      this.aoSegments[ this.aoSegments.length - 2 ].bIsChanging = false;
     }
+    for ( oSegment of this.aoSegments ) {
+      if ( this.bIsRunning ) // TODO FIX BUG
+        oSegment.run();
+      oSegment.render();
+    }
+    this.move();
+  }
+
+  this.createSegment = function() {
+    var vPathPos = new oVector( this.oBody.vCurrentPos.x, this.oBody.vCurrentPos.y );
+    this.aoSegments.push( new oPathSegment( vPathPos, this.cDirection ) );
   }
 
   this.move = function() {
+    var iSpeed = 3;
     with ( this.oBody ) {
-      console.log( this.cDirection )
       switch ( this.cDirection ) {
         case "R" :
-          vCurrentPos.x++;
+          vCurrentPos.x += iSpeed;
         break;
         case "U" :
-          vCurrentPos.y--;
+          vCurrentPos.y -= iSpeed;
         break;
         case "L" :
-          vCurrentPos.x--;
+          vCurrentPos.x -= iSpeed;
         break;
         case "D" :
-          vCurrentPos.y++;
+          vCurrentPos.y += iSpeed;
         break;
         default :
         break;
@@ -58,18 +104,31 @@ var oPath = function() {
   }
 
   this.bReachedNode = function() {
-    if ( !this.oCurrentNode || !this.oBody.vCurrentPos ) return;
-    var iPositionOffset = 10;
-    if ( this.oBody.vCurrentPos >= this.oCurrentNode.oBody.vPosition - iPositionOffset
-        && this.oBody.vCurrentPos <= this.oCurrentNode.oBody.vPosition + iPositionOffset )
-    {
-      return true;
-    }
-    return false;
+    if ( !this.oCurrentNode || this.oCurrentNode.bIsFirst ) return;
+    var iPositionOffset = 1;
+    if ( dist( this.oBody.vCurrentPos.x, this.oBody.vCurrentPos.y,
+          this.oCurrentNode.oBody.vPosition.x,
+          this.oCurrentNode.oBody.vPosition.y ) < iPositionOffset ) {
+          return true;
+        } else {
+          return false;
+        }
   }
 
   this.setDirection = function( cpNewDir ) {
-    this.cDirection = cpNewDir;
+    if ( cpNewDir == "A" ) {
+      if ( this.cDirection == "D" ) {
+        this.cDirection = "U";
+      } else if ( this.cDirection == "U" ) {
+        this.cDirection = "D";
+      } else if ( this.cDirection == "L" ) {
+        this.cDirection = "R";
+      } else if ( this.cDirection == "R" ) {
+        this.cDirection = "L";
+      }
+    } else {
+      this.cDirection = cpNewDir;
+    }
   }
 };
 
@@ -83,14 +142,5 @@ var oPathBody = function() {
   }
   this.setEndPos = function( vpNewEnd ) {
     this.vEndPos = vpNewEnd;
-  }
-};
-
-var oPathRender = function() {
-  this.sColour = "#fff";
-  this.iWeight = 20;
-  this.renderColours = function() {
-    noStroke();
-    fill(this.sColour);
   }
 };
