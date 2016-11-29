@@ -3,7 +3,7 @@ var oSystem = function() {
   this.oSelectedNode = undefined;
 
   this.init = function() {
-    this.loadLevel( new oLevel_0() );
+    this.loadLevel( new oLevel_1() );
     this.loadPath();
     this.checkPathProgress();
   }

@@ -64,15 +64,10 @@ function setupExtension() {
 function draw() {
   // First of all, if the extension is paused, don't do anything
   if (!running) return;
-
   // From here on it's just whatever standard p5 stuff you want to do.
   background(sBackgroundColor);
-  fill( sBackgroundColor );
-  rect(0 - (windowWidth / 2), 0 - (windowHeight / 2), windowWidth, windowHeight);
   vMouse.set( mouseX, mouseY );
   oSystem.run();
-  // If we're running, we clear the canvas..
-  clear();
 }
 
 function keyPressed() {
