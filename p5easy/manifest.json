@@ -1,0 +1,49 @@
+// p5 Easy
+// CART 351 Chrome Extension
+// Manifest
+//
+// This is the manifest file for the extension which does the
+// various pieces of book keeping necessary for the browser to
+// understand what the extension is called, and what information
+// it needs access to in order to run.
+
+
+{
+  "manifest_version": 2,
+
+  "name": "p5 Easy",
+  "author": "Pippin Barr",
+  "description": "This extension inserts a p5 canvas onto the current page.",
+  "version": "1.0",
+
+  "icons": {  "16" : "icon.png",
+              "48" : "icon.png",
+              "128" : "icon.png"
+            },
+
+  "content_scripts": [
+    {
+      "js": [ "jquery.min.js", "p5.min.js", "statics.js", "commandHandler.js",
+              "node.js", "path.js", "layout.js", "system.js", "content_script.js"
+            ],
+      "matches": [ "http://*/*", "https://*/*" ],
+      "run_at": "document_end"
+    }
+  ],
+
+  "background": {
+    "scripts": ["background_script.js"]
+  },
+
+  "browser_action": {
+    "default_title": "p5 is Good.",
+    "default_icon": {
+      "19": "icon_19.png"
+    }
+  },
+
+  "permissions": [
+    "activeTab",
+    "storage"
+  ]
+}
