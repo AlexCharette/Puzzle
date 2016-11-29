@@ -63,10 +63,13 @@ var oPath = function() {
     if ( this.bIsRunning ) {
       for ( oSegment of this.aoSegments ) {
         oSegment.run();
-        oSegment.render();
+
       }
+      this.move();
     }
-    this.move();
+    for ( oSegment of this.aoSegments ) {
+      oSegment.render();
+    } 
   }
 
   this.createSegment = function() {
@@ -109,6 +112,8 @@ var oPath = function() {
     if ( dist( this.oBody.vCurrentPos.x, this.oBody.vCurrentPos.y,
           this.oCurrentNode.oBody.vPosition.x,
           this.oCurrentNode.oBody.vPosition.y ) < iPositionOffset ) {
+          console.log( this.oCurrentNode )
+          console.log( this.oCurrentNode.oBody.vPosition.x )
           console.log( this.oCurrentNode.sActiveState[ 0 ] )
           return true;
         } else {

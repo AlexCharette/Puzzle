@@ -27,7 +27,11 @@ function keyPressed() {
     oPath.receiveCommand( oCommandHandler.sCurrentSystemCommand );
     console.log( oCommandHandler.sCurrentSystemCommand )
     if ( !oSelectedNode ) return;
-    oSelectedNode.receiveCommand( oCommandHandler.sCurrentNodeCommand );
+    if ( oCommandHandler.sCurrentSystemCommand == "run" ) {
+      oSelectedNode = undefined;
+    } else {
+      oSelectedNode.receiveCommand( oCommandHandler.sCurrentNodeCommand );
+    }
   }
 }
 

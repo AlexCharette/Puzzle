@@ -46,9 +46,10 @@ var oLayout = function( ipNumNodes, avpLocations ) {
 };
 
 var oLevel_0 = function() {
+  this.bIsFinished = false;
   this.iNUM_NODES = 2;
-  this.iRowStartX = vWindowSize.x / this.iNUM_NODES;
   this.iXIncrement = 300;
+  this.iRowStartX = vWindowSize.x / this.iNUM_NODES;
   this.iRowY = vWindowSize.y / 2;
   this.avLocations = [ new oVector( this.iRowStartX, this.iRowY ),
                        new oVector( this.iRowStartX + this.iXIncrement, this.iRowY )
@@ -57,9 +58,10 @@ var oLevel_0 = function() {
 };
 
 var oLevel_1 = function() {
+  this.bIsFinished = false;
   this.iNUM_NODES = 3;
-  this.iRowStartX = vWindowSize.x / this.iNUM_NODES;
   this.iXIncrement = 300;
+  this.iRowStartX = vWindowSize.x / this.iNUM_NODES;
   this.iRowY = vWindowSize.y / 2;
   this.avLocations = [ new oVector( this.iRowStartX, this.iRowY ),
                        new oVector( this.iRowStartX + this.iXIncrement, this.iRowY ),

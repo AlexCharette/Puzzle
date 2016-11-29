@@ -3,7 +3,7 @@ var oSystem = function() {
   this.oSelectedNode = undefined;
 
   this.init = function() {
-    this.loadLevel( new oLevel_1() );
+    this.loadLevel( new oLevel_0() );
     this.loadPath();
     this.checkPathProgress();
   }
@@ -46,18 +46,15 @@ var oSystem = function() {
   }
 
   this.checkPathProgress = function() {
-    if ( !this.oPath.oBody.vCurrentPos ) {
-      console.log("ERR_NO_PATH_POS");
-      return;
-    }
+    if ( !this.oPath.oBody.vCurrentPos ) return;
     for ( oNode of this.aoNodes ) {
       if ( oNode.oBody.bContains( this.oPath.oBody.vCurrentPos ) ) {
         this.oPath.oCurrentNode = oNode;
         if ( this.aoNodes.indexOf( oNode ) == 0 ) {
           this.oPath.oCurrentNode.bIsFirst = true;
         } else if ( this.aoNodes.indexOf( oNode ) == this.aoNodes.length - 1 ) {
-          console.log("LAST STOP")
           this.oPath.oCurrentNode.bIsLast = true;
+          this.oCurrentLevel.bIsFinished = true;
         }
       }
     }
