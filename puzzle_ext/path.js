@@ -63,13 +63,32 @@ var oPath = function() {
     if ( this.bIsRunning ) {
       for ( oSegment of this.aoSegments ) {
         oSegment.run();
-
       }
+      this.limitPath();
       this.move();
     }
     for ( oSegment of this.aoSegments ) {
       oSegment.render();
-    } 
+    }
+  }
+
+  this.limitPath = function() {
+    var iEdgeLimit = 100;
+    var aiLimits = [ 0 + iEdgeLimit, vWindowSize.x - iEdgeLimit, 0 + iEdgeLimit, vWindowSize.y - iEdgeLimit ];
+    if ( ( this.oBody.vCurrentPos.x <= aiLimits[ 0 ] || this.oBody.vCurrentPos.x >= aiLimits[ 1 ] ) ||
+       ( this.oBody.vCurrentPos.y <= aiLimits[ 2 ] || this.oBody.vCurrentPos.y >= aiLimits[ 3 ] ) ) {
+      this.reset();
+    }
+  }
+
+  this.reset = function() {
+    this.oBody.vCurrentPos = this.oBody.vStartPos;
+    this.bIsRunning = false;
+    this.cDirection = "R";
+    while ( this.aoSegments.length ) {
+      this.aoSegments.pop();
+    }
+    this.createSegment();
   }
 
   this.createSegment = function() {

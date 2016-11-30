@@ -46,26 +46,44 @@ var oLayout = function( ipNumNodes, avpLocations ) {
 };
 
 var oLevel_0 = function() {
+  this.iLevelNum = 0;
   this.bIsFinished = false;
   this.iNUM_NODES = 2;
-  this.iXIncrement = 300;
-  this.iRowStartX = vWindowSize.x / this.iNUM_NODES;
+  this.iXIncrement = ( vWindowSize.x / this.iNUM_NODES ) - 200;
+  this.iRowStartX = 0;
   this.iRowY = vWindowSize.y / 2;
-  this.avLocations = [ new oVector( this.iRowStartX, this.iRowY ),
-                       new oVector( this.iRowStartX + this.iXIncrement, this.iRowY )
+  this.avLocations = [ new oVector( this.iRowStartX + this.iXIncrement, this.iRowY ),
+                       new oVector( this.iRowStartX + this.iXIncrement + 400, this.iRowY )
                      ];
   this.oLayout = new oLayout( this.iNUM_NODES, this.avLocations );
 };
 
 var oLevel_1 = function() {
+  this.iLevelNum = 1;
   this.bIsFinished = false;
   this.iNUM_NODES = 3;
-  this.iXIncrement = 300;
-  this.iRowStartX = vWindowSize.x / this.iNUM_NODES;
+  this.iXIncrement = ( vWindowSize.x / this.iNUM_NODES ) - 200;
+  this.iRowStartX = 0;
   this.iRowY = vWindowSize.y / 2;
-  this.avLocations = [ new oVector( this.iRowStartX, this.iRowY ),
-                       new oVector( this.iRowStartX + this.iXIncrement, this.iRowY ),
-                       new oVector( this.iRowStartX + ( this.iXIncrement * 2 ), this.iRowY )
+  this.avLocations = [ new oVector( this.iRowStartX + this.iXIncrement, this.iRowY ),
+                       new oVector( this.iRowStartX + ( this.iXIncrement * 2 ), this.iRowY ),
+                       new oVector( this.iRowStartX + ( this.iXIncrement * 3 ), this.iRowY )
+                     ];
+  this.oLayout = new oLayout( this.iNUM_NODES, this.avLocations );
+};
+
+var oLevel_2 = function() {
+  this.iLevelNum = 2;
+  this.bIsFinished = false;
+  this.iNUM_NODES = 4;
+  this.iXIncrement = ( vWindowSize.x / 3 ) - 200;
+  this.iRowStartX = 0;
+  this.iRowY_1 = vWindowSize.y / 3;
+  this.iRowY_2 = vWindowSize.y - this.iRowY_1;
+  this.avLocations = [ new oVector( this.iRowStartX + this.iXIncrement, this.iRowY_1 ),
+                       new oVector( this.iRowStartX + ( this.iXIncrement * 2 ), this.iRowY_1 ),
+                       new oVector( this.iRowStartX + ( this.iXIncrement * 2 ), this.iRowY_2 ),
+                       new oVector( this.iRowStartX + ( this.iXIncrement * 3 ), this.iRowY_2 ),
                      ];
   this.oLayout = new oLayout( this.iNUM_NODES, this.avLocations );
 };

@@ -26,14 +26,17 @@ function setPaused(paused) {
   updateBadge(paused);
 }
 
-// Set the extension to pause on install
+function setLastCompletedLevel(level) {
+  localStorage.setItem('last_level', level);
+}
 
+// Set the extension to pause on install
 chrome.runtime.onInstalled.addListener(function() {
   setPaused(true);
+  setLastCompletedLevel(-1);
 });
 
 // If the extension's icon is clicked, toggle it
-
 chrome.browserAction.onClicked.addListener(function(tab){
   state = localStorage.getItem('paused') == 'true'
   setPaused(!state);
@@ -42,13 +45,15 @@ chrome.browserAction.onClicked.addListener(function(tab){
 });
 
 // Receive messages from the content script
-
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   if (message.name == "isPaused?") {
     sendResponse({value: localStorage.getItem('paused')});
+  } else if (message.name == "last_level?") {
+    sendResponse({value: localStorage.getItem('last_level')});
+  } else if (message.name == "levelComplete") {
+    setLastCompletedLevel(message.value);
   }
 });
 
 // Set the badge to be correct
-
 updateBadge(localStorage.getItem('paused') == true);

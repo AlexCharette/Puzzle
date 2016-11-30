@@ -44,7 +44,6 @@ var oEndNode = function() {
       rect( vPosition.x - ( iSize / 2 ), vPosition.y - ( iSize / 2 ), iSize, iSize );
     }
   }
-
 };
 
 var oRouteNode = function( spBaseState = "A" ) {
@@ -62,6 +61,8 @@ var oRouteNode = function( spBaseState = "A" ) {
   this.run = function() {
     if ( this.bIsSelected ) {
       this.oRender.setColour( '#3C9C56' );
+    } else {
+      this.oRender.setColour( '#FF7440' );
     }
     this.oRender.renderShape();
   }

@@ -3,9 +3,13 @@ var oSystem = function() {
   this.oSelectedNode = undefined;
 
   this.init = function() {
-    this.loadLevel( new oLevel_0() );
+    this.loadLevel( this.oCurrentLevel );
     this.loadPath();
     this.checkPathProgress();
+  }
+
+  this.setLevel = function( opLevel ) {
+    this.oCurrentLevel = opLevel;
   }
 
   this.run = function() {
@@ -23,7 +27,6 @@ var oSystem = function() {
   }
 
   this.loadLevel = function( opLevel ) {
-    this.oCurrentLevel = opLevel;
     opLevel.oLayout.init();
     this.aoNodes = opLevel.oLayout.aoNodes;
   }
@@ -54,7 +57,7 @@ var oSystem = function() {
           this.oPath.oCurrentNode.bIsFirst = true;
         } else if ( this.aoNodes.indexOf( oNode ) == this.aoNodes.length - 1 ) {
           this.oPath.oCurrentNode.bIsLast = true;
-          this.oCurrentLevel.bIsFinished = true;
+          this.bIsLevelFinished = true;
         }
       }
     }

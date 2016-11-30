@@ -20,14 +20,29 @@ var vWindowSize;
 var vMouse;
 var sBackgroundColor;
 
+var oLevelToRun = undefined;
+
 function setup() {
   setupExtension();
-  oSystem = new oSystem();
   oCommandHandler = new oCommandHandler();
   vWindowSize = new oVector( windowWidth, windowHeight );
   vMouse = new oVector();
   sBackgroundColor = 'rgba(46, 74, 140, 0.50)';
-  background(sBackgroundColor);
+  oSystem = new oSystem();
+  // chrome.runtime.sendMessage({name: "last_level?"}, function (response) {
+  //   console.log( response.value )
+  //   if ( response.value == -1 ) {
+  //       oLevelToRun = new oLevel_0();
+  //   } else if ( response.value == 0 ) {
+  //       oLevelToRun = new oLevel_1();
+  //   } else if ( response.value == 1 ) {
+  //       oLevelToRun = new oLevel_2();
+  //   } else {
+  //       oLevelToRun = new oLevel_0();
+  //   }
+  // });
+
+  oSystem.setLevel( new oLevel_2() );
   oSystem.init();
 }
 
@@ -67,7 +82,15 @@ function draw() {
   // From here on it's just whatever standard p5 stuff you want to do.
   background(sBackgroundColor);
   vMouse.set( mouseX, mouseY );
-  oSystem.run();
+
+  if ( oSystem.bIsLevelFinished ) {
+    chrome.runtime.sendMessage({name: "levelComplete", value: oSystem.oCurrentLevel.iLevelNum }, function(response) {
+      clear();
+      running = false;
+    });
+  } else {
+    oSystem.run();
+  }
 }
 
 function keyPressed() {
