@@ -53,6 +53,7 @@ var oRouteNode = function( spBaseState = "A" ) {
   this.asLRStates = [ "L", "", "A", "R" ];
   this.sActiveUDState = spBaseState;
   this.sActiveLRState = spBaseState;
+  this.bWasCrossed = false;
 
   this.init = function() {
     this.setShape();

@@ -56,7 +56,12 @@ var oPath = function() {
       this.bIsRunning = false;
     } else if ( this.bReachedNode() ) {
       if ( !this.oCurrentNode.sActiveState ) return;
-      this.setDirection( this.oCurrentNode.sActiveState[ 0 ] );
+      if ( !this.oCurrentNode.bWasCrossed ) {
+        this.setDirection( this.oCurrentNode.sActiveState[ 0 ] );
+        this.oCurrentNode.bWasCrossed = true;
+      } else {
+        this.setDirection( this.oCurrentNode.sActiveState[ 1 ] );
+      }
       this.createSegment();
       this.aoSegments[ this.aoSegments.length - 2 ].bIsChanging = false;
     }
@@ -64,7 +69,6 @@ var oPath = function() {
       for ( oSegment of this.aoSegments ) {
         oSegment.run();
       }
-      this.limitPath();
       this.move();
     }
     for ( oSegment of this.aoSegments ) {
@@ -97,6 +101,7 @@ var oPath = function() {
   }
 
   this.move = function() {
+    this.limitPath();
     with ( this.oBody ) {
       switch ( this.cDirection ) {
         case "R" :
@@ -131,13 +136,11 @@ var oPath = function() {
     if ( dist( this.oBody.vCurrentPos.x, this.oBody.vCurrentPos.y,
           this.oCurrentNode.oBody.vPosition.x,
           this.oCurrentNode.oBody.vPosition.y ) < iPositionOffset ) {
-          console.log( this.oCurrentNode )
-          console.log( this.oCurrentNode.oBody.vPosition.x )
-          console.log( this.oCurrentNode.sActiveState[ 0 ] )
           return true;
         } else {
           return false;
         }
+
   }
 
   this.setDirection = function( cpNewDir ) {
