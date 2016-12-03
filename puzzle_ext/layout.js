@@ -78,7 +78,7 @@ var oLevel_2 = function() {
   this.iNUM_NODES = 4;
   this.iXIncrement = ( vWindowSize.x / 3 ) - 200;
   this.iRowStartX = 0;
-  this.iRowY_1 = vWindowSize.y / 3;
+  this.iRowY_1 = vWindowSize.y / 4;
   this.iRowY_2 = vWindowSize.y - this.iRowY_1;
   this.avLocations = [ new oVector( this.iRowStartX + this.iXIncrement, this.iRowY_1 ),
                        new oVector( this.iRowStartX + ( this.iXIncrement * 2 ), this.iRowY_1 ),

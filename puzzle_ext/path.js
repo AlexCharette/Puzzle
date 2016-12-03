@@ -56,11 +56,12 @@ var oPath = function() {
       this.bIsRunning = false;
     } else if ( this.bReachedNode() ) {
       if ( !this.oCurrentNode.sActiveState ) return;
-      if ( !this.oCurrentNode.bWasCrossed ) {
+      if ( !this.oCurrentNode.bWasCrossed || this.oCurrentNode.sActiveState.length == 1 ) {
         this.setDirection( this.oCurrentNode.sActiveState[ 0 ] );
         this.oCurrentNode.bWasCrossed = true;
       } else {
         this.setDirection( this.oCurrentNode.sActiveState[ 1 ] );
+        console.log("check off 1")
       }
       this.createSegment();
       this.aoSegments[ this.aoSegments.length - 2 ].bIsChanging = false;
@@ -102,6 +103,7 @@ var oPath = function() {
 
   this.move = function() {
     this.limitPath();
+    console.log("Moviiiing")
     with ( this.oBody ) {
       switch ( this.cDirection ) {
         case "R" :
