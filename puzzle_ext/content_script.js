@@ -29,21 +29,23 @@ function setup() {
   vMouse = new oVector();
   sBackgroundColor = 'rgba(46, 74, 140, 0.50)';
   oSystem = new oSystem();
-  // chrome.runtime.sendMessage({name: "last_level?"}, function (response) {
-  //   console.log( response.value )
-  //   if ( response.value == -1 ) {
-  //       oLevelToRun = new oLevel_0();
-  //   } else if ( response.value == 0 ) {
-  //       oLevelToRun = new oLevel_1();
-  //   } else if ( response.value == 1 ) {
-  //       oLevelToRun = new oLevel_2();
-  //   } else {
-  //       oLevelToRun = new oLevel_0();
-  //   }
-  // });
-
-  oSystem.setLevel( new oLevel_2() );
-  oSystem.init();
+  chrome.runtime.sendMessage({name: "last_level?"}, function (response) {
+    if ( response.value == -1 ) {
+        oLevelToRun = new oLevel_0();
+    } else if ( response.value == 0 ) {
+        oLevelToRun = new oLevel_1();
+    } else if ( response.value == 1 ) {
+        oLevelToRun = new oLevel_2();
+    } else if ( response.value == 2 ) {
+        oLevelToRun = new oLevel_3();
+    } else if ( response.value == 3 ) {
+        oLevelToRun = new oLevel_4();
+    } else {
+        oLevelToRun = new oLevel_0();
+    }
+    oSystem.setLevel( new oLevel_1() );
+    oSystem.init();
+  });
 }
 
 function setupExtension() {
@@ -63,11 +65,6 @@ function setupExtension() {
       p5Canvas.elt.style.left = 0;
       p5Canvas.elt.style["z-index"] = 1000;
       p5Canvas.elt.style["pointer-events"] = 'none';
-      // Note that, for reasons I do not understand, all mouse events still work fine
-      // in the p5 canvas...???
-
-      // Get rid of the cursor
-      $('*').css({'cursor': 'none'});
     }
     else {
       // If we are paused, don't bother with draw
@@ -80,36 +77,47 @@ function draw() {
   // First of all, if the extension is paused, don't do anything
   if (!running) return;
   // From here on it's just whatever standard p5 stuff you want to do.
-  background(sBackgroundColor);
+  //background(sBackgroundColor);
+  background(255);
   vMouse.set( mouseX, mouseY );
 
-  if ( oSystem.bIsLevelFinished ) {
+  if ( oSystem.bLevelIsFinished ) {
     chrome.runtime.sendMessage({name: "levelComplete", value: oSystem.oCurrentLevel.iLevelNum }, function(response) {
       clear();
+      $('*').css({'cursor': 'auto', 'pointer-events': 'all'});
+      $('a').click(function() {
+        $(this).addClass("active");
+      });
       running = false;
     });
   } else {
+    $('a').click(function() {
+      return false;
+    });
+    $('*').css({'cursor': 'none', 'pointer-events': 'none'});
     oSystem.run();
+    oSystem.render();
   }
 }
 
 function keyPressed() {
   with ( oSystem ) {
     oCommandHandler.onKeyPress( key );
-    oPath.receiveCommand( oCommandHandler.sCurrentSystemCommand );
-    console.log( oCommandHandler.sCurrentSystemCommand )
-    if ( !oSelectedNode ) return;
-    if ( oCommandHandler.sCurrentSystemCommand == "run" ) {
-      oSelectedNode = undefined;
+    if ( keyCode == 32 ) {
+      oPath.switchState();
     } else {
-      oSelectedNode.receiveCommand( oCommandHandler.sCurrentNodeCommand );
+      if ( !oSelectedNode ) return;
+      if ( oPath.bIsRunning ) {
+        oSelectedNode = undefined;
+      } else {
+        oSelectedNode.receiveCommand_TEST( oCommandHandler.sCurrentNodeCommand );
+      }
     }
   }
 }
 
 function mouseClicked() {
   oSystem.checkForClickedNode();
-  console.log("They clicked!");
 }
 
 function windowResized() {
