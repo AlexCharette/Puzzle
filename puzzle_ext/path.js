@@ -4,7 +4,7 @@ var oPathSegment = function( vpPosition, ipSpeed, cpState ) {
   this.bIsChanging = true;
   this.iChange = 0;
   this.iIncrement = ipSpeed;
-  this.sColour = "#fff";
+  this.sColour = '#E01E1D';//"#fff";
   this.iWeight = 20;
 
   this.run = function() {
@@ -26,7 +26,7 @@ var oPathSegment = function( vpPosition, ipSpeed, cpState ) {
           rect( ( vPosition.x - iOffset ), ( vPosition.y - iOffset ), iChange, iWeight );
         break;
         case "U" :
-          rect( ( vPosition.x - iOffset ), ( vPosition.y - iOffset ) - iChange, iWeight, iChange );
+          rect( ( vPosition.x - iOffset ), ( vPosition.y + iOffset ) - iChange, iWeight, iChange );
         break;
         case "D" :
           rect( ( vPosition.x - iOffset ), ( vPosition.y - iOffset ), iWeight, iChange );
@@ -36,6 +36,10 @@ var oPathSegment = function( vpPosition, ipSpeed, cpState ) {
       }
     }
   }
+
+  this.setColour = function( spColour ) {
+    this.sColour = spColour;
+  }
 };
 
 var oPath = function() {
@@ -44,6 +48,9 @@ var oPath = function() {
   this.oCurrentNode;
   this.cDirection = "R";
   this.bIsRunning = false;
+  this.bFoundKey = false;
+  this.bUserMadeMistake = false;
+  this.bPuzzleSolved = false;
 
   this.init = function() {
     var vTempPos = this.oBody.vStartPos;
@@ -61,7 +68,6 @@ var oPath = function() {
         this.oCurrentNode.bWasCrossed = true;
       } else {
         this.setDirection( this.oCurrentNode.sActiveState[ 1 ] );
-        console.log("check off 1")
       }
       this.createSegment();
       this.aoSegments[ this.aoSegments.length - 2 ].bIsChanging = false;
@@ -72,7 +78,20 @@ var oPath = function() {
       }
       this.move();
     }
+  }
+
+  this.render = function() {
+    var sMistakeColour = '', sSuccessColour = '',
+        sNormalColour = '', sColourToSet = '';
+    if ( this.bUserMadeMistake ) {
+      sColourToSet = sMistakeColour;
+    } else if ( this.bPuzzleSolved ) {
+      sColourToSet = sSuccessColour;
+    } else {
+      sColourToSet = sNormalColour;
+    }
     for ( oSegment of this.aoSegments ) {
+      oSegment.setColour( sColourToSet );
       oSegment.render();
     }
   }
@@ -82,18 +101,18 @@ var oPath = function() {
     var aiLimits = [ 0 + iEdgeLimit, vWindowSize.x - iEdgeLimit, 0 + iEdgeLimit, vWindowSize.y - iEdgeLimit ];
     if ( ( this.oBody.vCurrentPos.x <= aiLimits[ 0 ] || this.oBody.vCurrentPos.x >= aiLimits[ 1 ] ) ||
        ( this.oBody.vCurrentPos.y <= aiLimits[ 2 ] || this.oBody.vCurrentPos.y >= aiLimits[ 3 ] ) ) {
+         this.bUserMadeMistake = true;
       this.reset();
     }
   }
 
   this.reset = function() {
-    this.oBody.vCurrentPos = this.oBody.vStartPos;
     this.bIsRunning = false;
     this.cDirection = "R";
     while ( this.aoSegments.length ) {
       this.aoSegments.pop();
     }
-    this.createSegment();
+    this.init();
   }
 
   this.createSegment = function() {
@@ -103,7 +122,6 @@ var oPath = function() {
 
   this.move = function() {
     this.limitPath();
-    console.log("Moviiiing")
     with ( this.oBody ) {
       switch ( this.cDirection ) {
         case "R" :
@@ -124,12 +142,8 @@ var oPath = function() {
     }
   }
 
-  this.receiveCommand = function( spCommand ) {
-    if ( spCommand == "run" ) {
-      this.bIsRunning = true;
-    } else if ( spCommand == "pause" ) {
-      this.bIsRunning = false;
-    }
+  this.switchState = function() {
+      this.bIsRunning = !this.bIsRunning;
   }
 
   this.bReachedNode = function() {
@@ -138,11 +152,17 @@ var oPath = function() {
     if ( dist( this.oBody.vCurrentPos.x, this.oBody.vCurrentPos.y,
           this.oCurrentNode.oBody.vPosition.x,
           this.oCurrentNode.oBody.vPosition.y ) < iPositionOffset ) {
+          this.checkForKey();
           return true;
-        } else {
+    } else {
           return false;
-        }
+    }
+  }
 
+  this.checkForKey = function() {
+    if ( this.oCurrentNode.bHasKey ) {
+      this.bFoundKey = true;
+    }
   }
 
   this.setDirection = function( cpNewDir ) {
@@ -154,7 +174,7 @@ var oPathBody = function() {
   this.vStartPos;
   this.vEndPos;
   this.vCurrentPos;
-  this.iSpeed = 3;
+  this.iSpeed = 6;
 
   this.setStartPos = function( vpNewStart ) {
     this.vStartPos = vpNewStart;
