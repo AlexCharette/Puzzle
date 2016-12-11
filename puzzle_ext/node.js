@@ -1,7 +1,7 @@
 
 var oNodeBody = function() {
   this.vPosition;
-  this.iSize = 200; // TODO set different value
+  this.iSize = vWindowSize.y / 6; // TODO set different value
   this.setPosition = function( vpNewPos ) {
     this.vPosition = vpNewPos;
   }
@@ -21,13 +21,13 @@ var oNodeBody = function() {
 };
 
 var oNodeRender = function() {
-  this.sColour = '#FF7440';
+  this.sColour = 'rgb(224, 30, 29)';//'#FF7440';
   this.setColour = function( spColour ) {
     this.sColour = spColour;
   }
   this.renderColours = function() {
     noFill();
-    strokeWeight( 5 );
+    strokeWeight( 10 );
     stroke( this.sColour );
   }
 };
@@ -35,37 +35,62 @@ var oNodeRender = function() {
 var oEndNode = function() {
   this.oBody = new oNodeBody();
   this.oRender = new oNodeRender();
-  this.run = function() {
-    this.oRender.renderShape();
+  this.bNeedsKey = false;
+
+  this.render = function( fpOpacity ) {
+    this.oRender.renderShape( fpOpacity );
+    if ( this.bNeedsKey ) {
+      this.renderKey( fpOpacity );
+    }
   }
+
   with ( this.oBody ) {
-    this.oRender.renderShape = function() {
-      this.renderColours();
+    this.oRender.renderShape = function( fpOpacity ) {
+      this.renderColours( fpOpacity );
       rect( vPosition.x - ( iSize / 2 ), vPosition.y - ( iSize / 2 ), iSize, iSize );
+    }
+  }
+
+  this.renderKey = function( fpOpacity ) {
+    with ( this.oBody ) {
+      noStroke();
+      fill( 'rgba(67, 120, 181, ' + fpOpacity + ')' );
+      arc( vPosition.x, vPosition.y, iSize, iSize, TWO_PI + HALF_PI, PI + HALF_PI,  CHORD);
     }
   }
 };
 
-var oRouteNode = function( spBaseState = "A" ) {
+var oRouteNode = function() {
   this.oBody = new oNodeBody();
   this.oRender = new oNodeRender();
   this.asUDStates = [ "U", "", "A", "D" ];
   this.asLRStates = [ "L", "", "A", "R" ];
+  this.aasStates = [ [ "UL",     "U",      "UR" ],
+                     [ "L", [ "LR", "UD" ], "R" ],
+                     [ "DL",     "D",      "DR" ]
+                   ];
+  var iIndex_Y = 1;
+  var iIndex_X = 1;
+  this.sActiveState = this.aasStates[ iIndex_Y ][ iIndex_X ].x;
   this.sActiveUDState = spBaseState;
   this.sActiveLRState = spBaseState;
   this.bWasCrossed = false;
+  this.bHasKey = false;
 
   this.init = function() {
     this.setShape();
   }
 
-  this.run = function() {
+  this.render = function( fpOpacity ) {
     if ( this.bIsSelected ) {
-      this.oRender.setColour( '#3C9C56' );
+      this.oRender.setColour( 'rgba(67, 120, 181, ' + fpOpacity + ')' );//'#3C9C56' );
     } else {
-      this.oRender.setColour( '#FF7440' );
+      this.oRender.setColour( 'rgba(224, 30, 29, ' + fpOpacity + ')' ); //'#FF7440' );
     }
-    this.oRender.renderShape();
+    this.oRender.renderShape( fpOpacity );
+    if ( this.bHasKey ) {
+      this.renderKey( fpOpacity );
+    }
   }
 
   this.oRender.renderShape = function() {
@@ -74,6 +99,47 @@ var oRouteNode = function( spBaseState = "A" ) {
               this.afTriCoords_1[ 1 ].y, this.afTriCoords_1[ 2 ].x, this.afTriCoords_1[ 2 ].y );
     triangle( this.afTriCoords_2[ 0 ].x, this.afTriCoords_2[ 0 ].y, this.afTriCoords_2[ 1 ].x,
               this.afTriCoords_2[ 1 ].y, this.afTriCoords_2[ 2 ].x, this.afTriCoords_2[ 2 ].y );
+  }
+
+  this.renderKey = function( fpOpacity) {
+    with ( this.oBody ) {
+      noStroke();
+      fill( 'rgba(67, 120, 181, ' + fpOpacity + ')' );
+      arc( vPosition.x, vPosition.y, iSize, iSize, PI + HALF_PI, TWO_PI + HALF_PI, CHORD);
+    }
+  }
+
+  this.receiveCommand_TEST = function( spCommand ) {
+    switch ( spCommand ) {
+      case "up" :
+        if ( iIndex_Y > 0 ) {
+         iIndex_Y--;
+        }
+        console.log( "Command: " + spCommand + " | State: " + this.sActiveUDState );
+      break;
+      case "down" :
+        if ( iIndex_Y > this.aasStates.length - 1 ) {
+         iIndex_Y++;
+        }
+        console.log( "Command: " + spCommand + " | State: " + this.sActiveUDState );
+      break;
+      case "left" :
+        if ( iIndex_X > 0 ) {
+         iIndex_X--;
+        }
+        console.log( "Command: " + spCommand + " | State: " + this.sActiveLRState );
+      break;
+      case "right" :
+        if ( iIndex_X > this.aasStates[ iIndex_Y ].length - 1 ) {
+         iIndex_X++;
+        }
+        console.log( "Command: " + spCommand + " | State: " + this.sActiveLRState );
+      break;
+      default:
+      console.log( "Invalid command entered: " + key );
+      break;
+    }
+    this.setShape();
   }
 
   // Changes the active state depending on the received command
@@ -103,7 +169,7 @@ var oRouteNode = function( spBaseState = "A" ) {
   }
 
   this.setShape = function() { // TODO clean up
-    this.sActiveState = this.sActiveUDState + this.sActiveLRState;
+    this.sActiveState = this.aasStates[ iIndex_Y ][ iIndex_X ];
     if ( !this.sActiveState ) { return; } // will return if both states are ""
     if ( this.sActiveState.length > 1 ) {
       if ( this.sActiveState[ 0 ] == "A" || this.sActiveState == "AA" ) {
@@ -129,7 +195,7 @@ var oRouteNode = function( spBaseState = "A" ) {
       var iSizeOffset = ( iSize / 2 );
       var iDiagonalSize = Math.sqrt( Math.pow( iSize, 2 ) * 2 );
       var iDiagonalOffset = iDiagonalSize / 2;
-      var iOverlapOffset = 3;
+      var iOverlapOffset = 6;
     }
     with ( this.oBody.vPosition ) {
       switch ( spState ) {
