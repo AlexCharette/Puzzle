@@ -63,17 +63,14 @@ var oEndNode = function() {
 var oRouteNode = function() {
   this.oBody = new oNodeBody();
   this.oRender = new oNodeRender();
-  this.asUDStates = [ "U", "", "A", "D" ];
-  this.asLRStates = [ "L", "", "A", "R" ];
   this.aasStates = [ [ "UL",     "U",      "UR" ],
                      [ "L", [ "LR", "UD" ], "R" ],
                      [ "DL",     "D",      "DR" ]
                    ];
-  var iIndex_Y = 1;
-  var iIndex_X = 1;
-  this.sActiveState = this.aasStates[ iIndex_Y ][ iIndex_X ].x;
-  this.sActiveUDState = spBaseState;
-  this.sActiveLRState = spBaseState;
+  this.iIndex_Y = 1;
+  this.iIndex_X = 1;
+  this.vPreviousIndex = new oVector( this.iIndex_X, this.iIndex_Y );
+  this.sActiveState = this.aasStates[ this.iIndex_Y ][ this.iIndex_X ][ 0 ];
   this.bWasCrossed = false;
   this.bHasKey = false;
 
@@ -109,80 +106,56 @@ var oRouteNode = function() {
     }
   }
 
-  this.receiveCommand_TEST = function( spCommand ) {
-    switch ( spCommand ) {
-      case "up" :
-        if ( iIndex_Y > 0 ) {
-         iIndex_Y--;
-        }
-        console.log( "Command: " + spCommand + " | State: " + this.sActiveUDState );
-      break;
-      case "down" :
-        if ( iIndex_Y > this.aasStates.length - 1 ) {
-         iIndex_Y++;
-        }
-        console.log( "Command: " + spCommand + " | State: " + this.sActiveUDState );
-      break;
-      case "left" :
-        if ( iIndex_X > 0 ) {
-         iIndex_X--;
-        }
-        console.log( "Command: " + spCommand + " | State: " + this.sActiveLRState );
-      break;
-      case "right" :
-        if ( iIndex_X > this.aasStates[ iIndex_Y ].length - 1 ) {
-         iIndex_X++;
-        }
-        console.log( "Command: " + spCommand + " | State: " + this.sActiveLRState );
-      break;
-      default:
-      console.log( "Invalid command entered: " + key );
-      break;
-    }
-    this.setShape();
-  }
-
-  // Changes the active state depending on the received command
   this.receiveCommand = function( spCommand ) {
+    this.vPreviousIndex.set( this.iIndex_X, this.iIndex_Y );
     switch ( spCommand ) {
       case "up" :
-        this.sActiveUDState = eGetPreviousIn_From( this.asUDStates, this.sActiveUDState );
-        console.log( "Command: " + spCommand + " | State: " + this.sActiveUDState );
+        if ( this.iIndex_Y > 0 ) {
+         this.iIndex_Y--;
+        }
+        console.log( "Command: " + spCommand + " | State: " + this.sActiveState );
       break;
       case "down" :
-        this.sActiveUDState = eGetNextIn_From( this.asUDStates, this.sActiveUDState );
-        console.log( "Command: " + spCommand + " | State: " + this.sActiveUDState );
+        if ( this.iIndex_Y < this.aasStates.length - 1 ) {
+         this.iIndex_Y++;
+        }
+        console.log( "Command: " + spCommand + " | State: " + this.sActiveState );
       break;
       case "left" :
-        this.sActiveLRState = eGetPreviousIn_From( this.asLRStates, this.sActiveLRState );
-        console.log( "Command: " + spCommand + " | State: " + this.sActiveLRState );
+        if ( this.iIndex_X > 0 ) {
+         this.iIndex_X--;
+        }
+        console.log( "Command: " + spCommand + " | State: " + this.sActiveState );
       break;
       case "right" :
-        this.sActiveLRState = eGetNextIn_From( this.asLRStates, this.sActiveLRState );
-        console.log( "Command: " + spCommand + " | State: " + this.sActiveLRState );
+        if ( this.iIndex_X < this.aasStates[ this.iIndex_Y ].length - 1 ) {
+         this.iIndex_X++;
+        }
+        console.log( "Command: " + spCommand + " | State: " + this.sActiveState );
       break;
       default:
       console.log( "Invalid command entered: " + key );
       break;
     }
+    console.log( " X: " + this.iIndex_X + ", Y : " + this.iIndex_Y )
     this.setShape();
   }
 
-  this.setShape = function() { // TODO clean up
-    this.sActiveState = this.aasStates[ iIndex_Y ][ iIndex_X ];
+  this.setShape = function() {
+    if ( this.iIndex_Y == 1 && this.iIndex_X == 1 ) {
+      if ( this.iIndex_X != this.vPreviousIndex.x ) {
+        this.sActiveState = this.aasStates[ this.iIndex_Y ][ this.iIndex_X ][ 0 ];
+      } else if ( this.iIndex_Y != this.vPreviousIndex.y ) {
+        this.sActiveState = this.aasStates[ this.iIndex_Y ][ this.iIndex_X ][ 1 ];
+      }
+    } else {
+      this.sActiveState = this.aasStates[ this.iIndex_Y ][ this.iIndex_X ];
+    }
+    console.log( this.sActiveState )
     if ( !this.sActiveState ) { return; } // will return if both states are ""
     if ( this.sActiveState.length > 1 ) {
-      if ( this.sActiveState[ 0 ] == "A" || this.sActiveState == "AA" ) {
-        this.sActiveState = "UD";
-      } else if ( this.sActiveState[ 1 ] == "A" ) {
-        this.sActiveState = "LR";
-      }
       this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( this.sActiveState[ 0 ] );
       this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( this.sActiveState[ 1 ] );
-    } else if ( this.sActiveState == "A" ) {
-      this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( "U");
-      this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( "D" );
-      this.sActiveState = "UD";
     } else {
       this.oRender.afTriCoords_1 = this.afGetTriCoordsFor( this.sActiveState );
       this.oRender.afTriCoords_2 = this.afGetTriCoordsFor( this.sActiveState );

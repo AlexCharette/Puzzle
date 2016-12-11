@@ -110,7 +110,7 @@ function keyPressed() {
       if ( oPath.bIsRunning ) {
         oSelectedNode = undefined;
       } else {
-        oSelectedNode.receiveCommand_TEST( oCommandHandler.sCurrentNodeCommand );
+        oSelectedNode.receiveCommand( oCommandHandler.sCurrentNodeCommand );
       }
     }
   }
