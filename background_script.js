@@ -1,6 +1,6 @@
 /*
 
-Clockwork
+Locked
 CART 351 Chrome Extension
 p5 Overlay
 
@@ -26,11 +26,12 @@ function setPaused(paused) {
   updateBadge(paused);
 }
 
+// Store the level that was lasted completed
 function setLastCompletedLevel(level) {
   localStorage.setItem('last_level', level);
 }
 
-// Set the extension to pause on install
+// Set the extension to pause and start us at the first level on install
 chrome.runtime.onInstalled.addListener(function() {
   setPaused(true);
   setLastCompletedLevel(-1);

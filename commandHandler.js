@@ -1,8 +1,11 @@
+/*
+  Contains the command handler class that serves as the interface
+  between the user and the nodes. Useless? Maybe.
+*/
 var oCommandHandler = function() {
-  this.sCurrentSystemCommand = "pause";
+  // The different commands that can be given
   this.asNodeCommands = [ "up", "down", "left", "right" ];
-  this.asSystemCommands = [ "run", "pause" ];
-  this.sError = "invalid";
+  // Changes the current command when a key (W, A, S, D) is pressed
   this.onKeyPress = function( ipKey ) {
     switch ( ipKey ) {
       case 'W' :
@@ -17,15 +20,7 @@ var oCommandHandler = function() {
       case 'D' :
         this.sCurrentNodeCommand = this.asNodeCommands[ 3 ];
       break;
-      case ' ' :
-        if ( this.sCurrentSystemCommand != this.asSystemCommands[ 0 ] ) {
-          this.sCurrentSystemCommand = this.asSystemCommands[ 0 ];
-        } else {
-          this.sCurrentSystemCommand = this.asSystemCommands[ 1 ];
-        }
-      break;
       default :
-        this.sCurrentNodeCommand = this.sError;
       break;
     }
   }

@@ -1,4 +1,4 @@
-// p5 Easy
+// Locked
 // CART 351 Chrome Extension
 // Manifest
 //
@@ -38,7 +38,7 @@
   "browser_action": {
     "default_title": "You can solve this.",
     "default_icon": {
-      "19": "icon_19.png"
+      "19": "icon.png"
     }
   },
 
